@@ -4,11 +4,7 @@ import { isTokenExpired } from './utils/helper'
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get('rise_admin_auth')?.value
-  console.log('token ===>', token)
   const expiredToken = isTokenExpired(token as string)
-
-  console.log('expiredToken ===>', expiredToken)
-  console.log('token ===>', token)
 
   // Redirect unauthenticated users to login page
   if (expiredToken) {
