@@ -37,8 +37,7 @@ export function NavMain({
   const pathname = usePathname()
   const session = {
     user: {
-      name: 'John Doe',
-      email: 'john.doe@example.com',
+      name: 'Admin',
     },
   }
 

@@ -5,18 +5,22 @@ import api from '../services/api'
 import { RISE_ADMIN_TOKEN } from '@/utils/constants'
 import { removeCookie } from '@/utils/cookie'
 import { AxiosError } from 'axios'
+import { useRouter } from 'next/navigation'
 
 export function useAuth() {
   const [userLoggedIn, setUserLoggedIn] = useState<boolean>(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
 
   const checkAuthStatus = async () => {
     try {
       setLoading(true)
       const { data } = await api.get('/admin/auth/status')
-      console.log('data ====>', data)
       setUserLoggedIn(data.userLoggedIn)
+      // if (data.userLoggedIn) {
+      //   router.push('/apps')
+      // }
     } catch (err) {
       setUserLoggedIn(false)
       const error = err as AxiosError
@@ -43,7 +47,10 @@ export function useAuth() {
       document.cookie =
         'rise_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;'
 
+      console.log('logged out')
+
       setUserLoggedIn(false) // Immediately clear user state
+      router.push('/dashboard')
     } catch (err) {
       console.error('Logout failed:', err)
     }

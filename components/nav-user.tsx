@@ -26,8 +26,7 @@ export function NavUser() {
   const { isMobile } = useSidebar()
   const session = {
     user: {
-      name: 'John Doe',
-      email: 'john.doe@example.com',
+      name: 'Admin',
     },
   }
 
@@ -47,9 +46,9 @@ export function NavUser() {
                     <span className="truncate font-semibold">
                       {session?.user?.name}
                     </span>
-                    <span className="truncate text-xs">
+                    {/* <span className="truncate text-xs">
                       {session.user?.email}
-                    </span>
+                    </span> */}
                   </>
                 ) : (
                   <>
@@ -78,9 +77,9 @@ export function NavUser() {
                   <span className="truncate font-semibold">
                     {session?.user?.name}
                   </span>
-                  <span className="truncate text-xs">
+                  {/* <span className="truncate text-xs">
                     {session?.user?.email}
-                  </span>
+                  </span> */}
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -92,8 +91,8 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut onClick={() => logout()} />
+            <DropdownMenuItem onClick={logout}>
+              <LogOut />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
