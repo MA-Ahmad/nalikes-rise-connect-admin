@@ -32,7 +32,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className={cn('flex', open ? 'justify-start' : 'justify-center')}
             >
-              <Link href="/dashboard">
+              <Link href="/apps">
                 <GalleryVerticalEnd className="size-4" />
                 {open ? (
                   <span className="text-2xl font-bold">Dashboard</span>

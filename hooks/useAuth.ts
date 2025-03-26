@@ -49,8 +49,8 @@ export function useAuth() {
 
       console.log('logged out')
 
-      setUserLoggedIn(false) // Immediately clear user state
-      router.push('/dashboard')
+      setUserLoggedIn(false)
+      router.push('/login')
     } catch (err) {
       console.error('Logout failed:', err)
     }
