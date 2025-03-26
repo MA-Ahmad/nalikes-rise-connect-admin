@@ -10,6 +10,13 @@ const nextConfig: NextConfig = {
       },
     ]
   },
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'risechain-uploads.s3.us-east-1.amazonaws.com',
+      },
+    ],
+  },
 }
 
 export default nextConfig

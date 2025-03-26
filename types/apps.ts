@@ -1,8 +1,14 @@
+import { AppCategory } from '@/utils/schema'
+
 export interface App {
   id: string
+  description: string
+  featured: boolean
+  logo: string
+  banner: string
   rank: number
   name: string
-  category: string
+  category: typeof AppCategory
   tvl: number
   change1D: number
   change7D: number

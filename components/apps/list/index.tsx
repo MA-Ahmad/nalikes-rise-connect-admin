@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import Link from 'next/link'
 import {
   ColumnFiltersState,
@@ -27,9 +27,10 @@ import {
 } from '@/components/ui/table'
 import { createColumns } from './columns'
 import { App, Meta } from '@/types/apps'
-// import { showToast } from '@/utils/toast'
-import { fetchApps } from '@/actions/apps'
-// import { AxiosError } from 'axios'
+import { fetchApps, removeApp } from '@/actions/apps'
+import { showToast } from '@/utils/toast'
+import { AxiosError } from 'axios'
+import { DeleteConfirmationDialog } from '@/components/shared/delete-confirmation-dialog'
 export function Apps() {
   const [data, setData] = useState<App[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -44,40 +45,39 @@ export function Apps() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
 
-  //   const [selectedApp, setSelectedApp] = useState<App | null>(null)
-  //   const [isPending, startTransition] = useTransition()
+  const [selectedApp, setSelectedApp] = useState<App | null>(null)
+  const [isPending, startTransition] = useTransition()
 
-  //   const handleDeleteApp = (app: App) => {
-  //     setSelectedApp(app)
-  //   }
+  const handleDeleteApp = (app: App) => {
+    setSelectedApp(app)
+  }
 
-  //   const handleConfirmDelete = async () => {
-  //     if (!selectedApp) return
+  const handleConfirmDelete = async () => {
+    if (!selectedApp) return
 
-  //     startTransition(async () => {
-  //       try {
-  //         const response = await removeApp(selectedApp.id)
+    startTransition(async () => {
+      try {
+        const response = await removeApp(selectedApp.id)
 
-  //         if (response.error) {
-  //           showToast.error(response.error)
-  //         } else {
-  //           showToast.success('App removed successfully')
-  //           // Refresh the data
-  //           loadApps()
-  //         }
-  //       } catch (error) {
-  //         if (error instanceof AxiosError) {
-  //           showToast.error(
-  //             error.response?.data?.message || 'Failed to remove app'
-  //           )
-  //         } else {
-  //           showToast.error('Failed to remove app')
-  //         }
-  //       } finally {
-  //         setSelectedApp(null)
-  //       }
-  //     })
-  //   }
+        if (response.error) {
+          showToast.error(response.error)
+        } else {
+          showToast.success('App removed successfully')
+          loadApps()
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          showToast.error(
+            error.response?.data?.message || 'Failed to remove app'
+          )
+        } else {
+          showToast.error('Failed to remove app')
+        }
+      } finally {
+        setSelectedApp(null)
+      }
+    })
+  }
 
   const loadApps = async () => {
     try {
@@ -109,8 +109,8 @@ export function Apps() {
     loadApps()
   }, [meta.currentPage, meta.pageSize])
 
-  const columnsWithHandlers = createColumns()
-  //   const columnsWithHandlers = createColumns(handleDeleteApp)
+  //   const columnsWithHandlers = createColumns()
+  const columnsWithHandlers = createColumns(handleDeleteApp)
 
   const table = useReactTable({
     data,
@@ -259,6 +259,13 @@ export function Apps() {
           </div>
         </CardContent>
       </Card>
+
+      <DeleteConfirmationDialog
+        open={!!selectedApp}
+        onOpenChange={() => setSelectedApp(null)}
+        onConfirm={handleConfirmDelete}
+        isLoading={isPending}
+      />
     </div>
   )
 }

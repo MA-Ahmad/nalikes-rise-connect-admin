@@ -40,17 +40,6 @@ export default function LoginPage() {
     }
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col gap-4 h-screen w-full items-center justify-center bg-background">
-        <div className="flex items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-gray-300 border-t-transparent"></div>
-        </div>
-        <div className="text-center">Loading...</div>
-      </div>
-    )
-  }
-
   return (
     <div className="flex h-screen w-full items-center justify-center bg-background">
       <motion.div
@@ -72,7 +61,9 @@ export default function LoginPage() {
           {hasError && (
             <p className="text-sm text-red-500">Incorrect password</p>
           )}
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? 'Submitting...' : 'Submit'}
+          </Button>
         </form>
       </motion.div>
     </div>

@@ -17,12 +17,26 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { appSchema } from '@/utils/schema'
+import { AppCategory, appSchema } from '@/utils/schema'
 import { showToast } from '@/utils/toast'
 import { AxiosError } from 'axios'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Textarea } from '../ui/textarea'
+import { Checkbox } from '../ui/checkbox'
+import { Label } from '../ui/label'
+import Image from 'next/image'
+import { Plus } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
+
 interface AppFormProps {
   initialData?: z.infer<typeof appSchema>
-  onSubmit: (values: z.infer<typeof appSchema>) => Promise<{
+  onSubmit: (values: FormData) => Promise<{
     error?: string
   }>
   submitButtonText?: string
@@ -34,6 +48,12 @@ export function AppForm({
   submitButtonText = 'Save',
 }: AppFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const [logoPreview, setLogoPreview] = React.useState<string | null>(
+    initialData?.logo instanceof File ? null : initialData?.logo || null
+  )
+  const [bannerPreview, setBannerPreview] = React.useState<string | null>(
+    initialData?.banner instanceof File ? null : initialData?.banner || null
+  )
   const router = useRouter()
 
   const defaultValues = {
@@ -45,10 +65,52 @@ export function AppForm({
     defaultValues,
   })
 
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      form.setValue('logo', file)
+      const reader = new FileReader()
+      reader.onload = () => {
+        setLogoPreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      form.setValue('banner', file)
+      const reader = new FileReader()
+      reader.onload = () => {
+        setBannerPreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   async function handleSubmit(values: z.infer<typeof appSchema>) {
     setIsSubmitting(true)
     try {
-      const response = await onSubmit(values)
+      const formData = new FormData()
+
+      // Append all text fields
+      Object.entries(values).forEach(([key, value]) => {
+        if (key !== 'logo' && key !== 'banner' && value !== undefined) {
+          formData.append(key, String(value))
+        }
+      })
+
+      // Append file fields if they exist
+      if (values.logo instanceof File) {
+        formData.append('logo', values.logo)
+      }
+
+      if (values.banner instanceof File) {
+        formData.append('banner', values.banner)
+      }
+
+      const response = await onSubmit(formData)
       if (response.error) {
         showToast.error(response.error)
       } else {
@@ -71,6 +133,8 @@ export function AppForm({
       setIsSubmitting(false)
     }
   }
+
+  console.log('bannerPreview', bannerPreview)
 
   return (
     <Card className="pt-6">
@@ -102,24 +166,49 @@ export function AppForm({
                     )}
                   />
 
-                  <div className="flex flex-col gap-4">
-                    <FormField
-                      control={form.control}
-                      name="category"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Category</FormLabel>
+                  <FormField
+                    control={form.control}
+                    name="category"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Category</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
-                            <Input
-                              {...field}
-                              value={field.value?.toString() ?? ''}
-                            />
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a category" />
+                            </SelectTrigger>
                           </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                          <SelectContent>
+                            {Object.values(AppCategory).map((category) => (
+                              <SelectItem key={category} value={category}>
+                                {category.replace('_', ' ')}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="flex flex-col gap-4">
                     <FormField
                       control={form.control}
                       name="tvl"
@@ -331,10 +420,78 @@ export function AppForm({
                         )}
                       />
                     </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="logo">Logo</Label>
+                      <div className="flex items-center gap-4">
+                        {logoPreview && (
+                          <div className="relative h-12 w-12 overflow-hidden rounded-full border">
+                            <Image
+                              src={logoPreview}
+                              alt="Logo preview"
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+                        <Input
+                          id="logo"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleLogoChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="banner">Banner</Label>
+                      <div className="flex items-center gap-4">
+                        {bannerPreview && (
+                          <div className="relative h-24 w-48 overflow-hidden rounded-md border">
+                            <Image
+                              src={bannerPreview}
+                              alt="Banner preview"
+                              width={100}
+                              height={100}
+                              className="object-cover w-full h-full"
+                            />
+                          </div>
+                        )}
+                        <Input
+                          id="banner"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleBannerChange}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
+                <FormField
+                  control={form.control}
+                  name="featured"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Featured</FormLabel>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
                 <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Plus className="mr-2 h-4 w-4" />
+                  )}
                   {submitButtonText}
                 </Button>
               </form>

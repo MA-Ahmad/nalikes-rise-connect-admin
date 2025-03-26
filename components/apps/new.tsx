@@ -1,21 +1,13 @@
 'use client'
 
 import React from 'react'
-import * as z from 'zod'
-import { appSchema } from '@/utils/schema'
 import { DashboardHeader } from '@/components/dashboard/header'
 import { AppForm } from '@/components/apps/form'
 import { createApp } from '@/actions/apps'
 
 export default function AddAppPage() {
-  async function onSubmit(values: z.infer<typeof appSchema>) {
-    // const formData = new FormData()
-    // Object.entries(values).forEach(([key, value]) => {
-    //   if (value) {
-    //     formData.append(key, value as string)
-    //   }
-    // })
-    return createApp(values)
+  async function onSubmit(formData: FormData) {
+    return createApp(formData)
   }
 
   return (

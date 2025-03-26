@@ -1,8 +1,10 @@
+'use client'
+
 import api from '@/services/api'
 import { App } from '@/types/apps'
 import { AxiosError } from 'axios'
 
-interface AppResponse {
+export interface AppResponse {
   success: boolean
   apps?: App[]
   meta?: {
@@ -11,6 +13,7 @@ interface AppResponse {
     pageSize: number
     totalPages: number
   }
+  app?: App
   error?: string
 }
 
@@ -35,9 +38,13 @@ export const fetchApps = async (
   }
 }
 
-export const createApp = async (data: Partial<App>): Promise<AppResponse> => {
+export const createApp = async (data: FormData): Promise<AppResponse> => {
   try {
-    const response = await api.post('/apps', data)
+    const response = await api.post('/apps', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
     return response.data
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -55,10 +62,14 @@ export const createApp = async (data: Partial<App>): Promise<AppResponse> => {
 
 export const updateApp = async (
   id: string,
-  data: Partial<App>
+  data: FormData
 ): Promise<AppResponse> => {
   try {
-    const response = await api.put(`/apps/${id}`, data)
+    const response = await api.put(`/apps/${id}`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
     return response.data
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -92,20 +103,22 @@ export const removeApp = async (id: string): Promise<AppResponse> => {
   }
 }
 
-export const getApp = async (id: string): Promise<AppResponse> => {
-  try {
-    const response = await api.get(`/apps/${id}`)
-    return response.data
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Failed to fetch app',
-      }
-    }
-    return {
-      success: false,
-      error: 'Failed to fetch app',
-    }
-  }
-}
+// export const getApp = async (id: string): Promise<AppResponse> => {
+//   try {
+//     const response = await api.get(`/apps/${id}`)
+//     console.log(response.data)
+
+//     return { success: true, app: response.data }
+//   } catch (error) {
+//     if (error instanceof AxiosError) {
+//       return {
+//         success: false,
+//         error: error.response?.data?.message || 'Failed to fetch app',
+//       }
+//     }
+//     return {
+//       success: false,
+//       error: 'Failed to fetch app',
+//     }
+//   }
+// }
