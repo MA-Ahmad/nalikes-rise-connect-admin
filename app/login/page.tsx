@@ -30,11 +30,10 @@ export default function LoginPage() {
         router.push('/apps')
       } else {
         showToast.error(response.data.error || 'Failed to authenticate')
-        router.push('/login')
       }
     } catch (error) {
       console.error('Error during login:', error)
-      router.push('/')
+      showToast.error('Failed to authenticate')
     } finally {
       setIsLoading(false)
     }
@@ -61,7 +60,7 @@ export default function LoginPage() {
           {hasError && (
             <p className="text-sm text-red-500">Incorrect password</p>
           )}
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={password.length === 0 || isLoading}>
             {isLoading ? 'Submitting...' : 'Submit'}
           </Button>
         </form>

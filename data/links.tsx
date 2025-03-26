@@ -1,4 +1,4 @@
-import { LockIcon } from 'lucide-react'
+import { LockIcon, TwitterIcon } from 'lucide-react'
 
 export const adminNavLinks = [
   {
@@ -7,10 +7,10 @@ export const adminNavLinks = [
     icon: LockIcon,
     isActive: true,
   },
-  //   {
-  //     title: 'Users',
-  //     url: '/users',
-  //     icon: UsersIcon,
-  //     isActive: false,
-  //   },
+  {
+    title: 'Tweets',
+    url: '/tweets',
+    icon: TwitterIcon,
+    isActive: false,
+  },
 ]
