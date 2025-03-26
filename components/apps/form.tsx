@@ -31,7 +31,7 @@ import { Textarea } from '../ui/textarea'
 import { Checkbox } from '../ui/checkbox'
 import { Label } from '../ui/label'
 import Image from 'next/image'
-import { Plus } from 'lucide-react'
+import { Pencil, Plus } from 'lucide-react'
 import { Loader2 } from 'lucide-react'
 
 interface AppFormProps {
@@ -40,12 +40,14 @@ interface AppFormProps {
     error?: string
   }>
   submitButtonText?: string
+  edit?: boolean
 }
 
 export function AppForm({
   initialData,
   onSubmit,
   submitButtonText = 'Save',
+  edit = false,
 }: AppFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [logoPreview, setLogoPreview] = React.useState<string | null>(
@@ -157,7 +159,10 @@ export function AppForm({
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Name</FormLabel>
+                        <FormLabel className="gap-1">
+                          Name<span>*</span>
+                        </FormLabel>
+
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
@@ -171,7 +176,9 @@ export function AppForm({
                     name="category"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Category</FormLabel>
+                        <FormLabel className="gap-1">
+                          Category<span>*</span>
+                        </FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
@@ -199,7 +206,9 @@ export function AppForm({
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel className="gap-1">
+                          Description<span>*</span>
+                        </FormLabel>
                         <FormControl>
                           <Textarea {...field} />
                         </FormControl>
@@ -214,7 +223,9 @@ export function AppForm({
                       name="tvl"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>TVL</FormLabel>
+                          <FormLabel className="gap-1">
+                            TVL<span>*</span>
+                          </FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -240,7 +251,9 @@ export function AppForm({
                       name="mcapTvl"
                       render={({ field }) => (
                         <FormItem className="flex-1">
-                          <FormLabel>MCAP/TVL</FormLabel>
+                          <FormLabel className="gap-1">
+                            MCAP/TVL<span>*</span>
+                          </FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -267,7 +280,9 @@ export function AppForm({
                         name="change1D"
                         render={({ field }) => (
                           <FormItem className="flex-1">
-                            <FormLabel>1D Change</FormLabel>
+                            <FormLabel className="gap-1">
+                              1D Change<span>*</span>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -293,7 +308,9 @@ export function AppForm({
                         name="change7D"
                         render={({ field }) => (
                           <FormItem className="flex-1">
-                            <FormLabel>7D Change</FormLabel>
+                            <FormLabel className="gap-1">
+                              7D Change<span>*</span>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -319,7 +336,9 @@ export function AppForm({
                         name="change1M"
                         render={({ field }) => (
                           <FormItem className="flex-1">
-                            <FormLabel>1M Change</FormLabel>
+                            <FormLabel className="gap-1">
+                              1M Change<span>*</span>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -347,7 +366,9 @@ export function AppForm({
                         name="revenue1D"
                         render={({ field }) => (
                           <FormItem className="flex-1">
-                            <FormLabel>Revenue (1D)</FormLabel>
+                            <FormLabel className="gap-1">
+                              Revenue (1D)<span>*</span>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -373,7 +394,9 @@ export function AppForm({
                         name="revenue7D"
                         render={({ field }) => (
                           <FormItem className="flex-1">
-                            <FormLabel>Revenue (7D)</FormLabel>
+                            <FormLabel className="gap-1">
+                              Revenue (7D)<span>*</span>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -399,7 +422,9 @@ export function AppForm({
                         name="revenue1M"
                         render={({ field }) => (
                           <FormItem className="flex-1">
-                            <FormLabel>Revenue (1M)</FormLabel>
+                            <FormLabel className="gap-1">
+                              Revenue (1M)<span>*</span>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -422,7 +447,9 @@ export function AppForm({
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="logo">Logo</Label>
+                      <Label htmlFor="logo" className="gap-1">
+                        Logo<span>*</span>
+                      </Label>
                       <div className="flex items-center gap-4">
                         {logoPreview && (
                           <div className="relative h-12 w-12 overflow-hidden rounded-full border">
@@ -444,7 +471,9 @@ export function AppForm({
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="banner">Banner</Label>
+                      <Label htmlFor="banner" className="gap-1">
+                        Banner<span>*</span>
+                      </Label>
                       <div className="flex items-center gap-4">
                         {bannerPreview && (
                           <div className="relative h-24 w-48 overflow-hidden rounded-md border">
@@ -489,6 +518,8 @@ export function AppForm({
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : edit ? (
+                    <Pencil className="mr-2 h-4 w-4" />
                   ) : (
                     <Plus className="mr-2 h-4 w-4" />
                   )}

@@ -4,8 +4,8 @@ export interface App {
   id: string
   description: string
   featured: boolean
-  logo: string
-  banner: string
+  logo?: string
+  banner?: string
   rank: number
   name: string
   category: typeof AppCategory

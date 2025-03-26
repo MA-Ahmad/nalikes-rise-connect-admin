@@ -52,6 +52,7 @@ export function EditAppForm({ app }: EditAppFormProps) {
       initialData={initialData}
       onSubmit={onSubmit}
       submitButtonText="Update App"
+      edit={true}
     />
   )
 }
